@@ -31,11 +31,14 @@ export default function CameraScreen() {
         try {
             // Run inference - the library will resize to match model's expected input (180x180)
             const output = model.model.runSync([uri]);
-            
+            console.log("Output", output);
             // Get predictions from output tensor
             const probabilities = output[0];
+            console.log('Probabilities:', probabilities);
             const maxIndex = probabilities.indexOf(Math.max(...probabilities));
+            console.log('Max index:', maxIndex);
             const confidence = (probabilities[maxIndex] * 100).toFixed(1);
+            console.log('Confidence:', confidence);
             
             setPrediction(`${FLOWER_CLASSES[maxIndex]} (${confidence}%)`);
         } catch (error) {
