@@ -1,17 +1,49 @@
 import * as ImagePicker from 'expo-image-picker';
 import { useEffect, useState } from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useTensorflowModel } from 'react-native-fast-tflite';
+import { Asset } from 'expo-asset';
+
+const FLOWER_CLASSES = ['daisy', 'dandelion', 'rose', 'sunflower', 'tulip'];
 
 export default function CameraScreen() {
     const [mediaUri, setMediaUri] = useState<string | null>(null);
     const [mediaType, setMediaType] = useState<'image' | 'video' | null>(null);
+    const [prediction, setPrediction] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
+    
+    const model = useTensorflowModel(require('../../flower_classifier.tflite'));
 
     useEffect(() => {
         (async () => {
             await ImagePicker.requestCameraPermissionsAsync();
         })();
     }, []);
+
+    const classifyImage = async (uri: string) => {
+        if (model.state !== 'loaded') {
+            setPrediction('Model not loaded yet...');
+            return;
+        }
+
+        setLoading(true);
+        try {
+            // Run inference
+            const output = model.model.runSync([uri]);
+            
+            // Get predictions from output tensor
+            const probabilities = output[0];
+            const maxIndex = probabilities.indexOf(Math.max(...probabilities));
+            const confidence = (probabilities[maxIndex] * 100).toFixed(1);
+            
+            setPrediction(`${FLOWER_CLASSES[maxIndex]} (${confidence}%)`);
+        } catch (error) {
+            console.error('Classification error:', error);
+            setPrediction('Error classifying image');
+        }
+        setLoading(false);
+    };
 
     const takePhoto = async () => {
         const result = await ImagePicker.launchCameraAsync({
@@ -23,6 +55,8 @@ export default function CameraScreen() {
         if (!result.canceled) {
             setMediaUri(result.assets[0].uri);
             setMediaType('image');
+            setPrediction(null);
+            await classifyImage(result.assets[0].uri);
         }
     };
 
@@ -43,7 +77,11 @@ export default function CameraScreen() {
     return (
         <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
             <View style={styles.container}>
-            <Text style={styles.title}>Camera</Text>
+            <Text style={styles.title}>Flower Classifier</Text>
+            
+            {model.state === 'loading' && (
+                <Text style={styles.modelStatus}>Loading model...</Text>
+            )}
             
             <View style={styles.buttonContainer}>
                 <TouchableOpacity style={styles.button} onPress={takePhoto}>
@@ -55,10 +93,17 @@ export default function CameraScreen() {
                 </TouchableOpacity>
             </View>
 
+            {loading && <ActivityIndicator size="large" color="#8FD49D" style={styles.loader} />}
+
             {mediaUri && (
                 <View style={styles.previewContainer}>
                     {mediaType === 'image' ? (
-                        <Image source={{ uri: mediaUri }} style={styles.preview} />
+                        <>
+                            <Image source={{ uri: mediaUri }} style={styles.preview} />
+                            {prediction && (
+                                <Text style={styles.predictionText}>{prediction}</Text>
+                            )}
+                        </>
                     ) : (
                         <Text style={styles.videoText}>Video recorded: {mediaUri}</Text>
                     )}
@@ -86,6 +131,11 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 40,
         color: '#fff',
+    },
+    modelStatus: {
+        color: '#8FD49D',
+        fontSize: 14,
+        marginBottom: 20,
     },
     buttonContainer: {
         gap: 16,
@@ -122,6 +172,16 @@ const styles = StyleSheet.create({
     videoText: {
         fontSize: 14,
         color: '#999',
+        textAlign: 'center',
+    },
+    loader: {
+        marginTop: 20,
+    },
+    predictionText: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: '#8FD49D',
+        marginTop: 16,
         textAlign: 'center',
     },
 });
