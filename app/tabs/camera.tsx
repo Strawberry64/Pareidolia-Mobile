@@ -29,8 +29,12 @@ export default function CameraScreen() {
 
         setLoading(true);
         try {
-            // Run inference
-            const output = model.model.runSync([uri]);
+            // Run inference with 180x180 input size (as the model was trained)
+            const output = model.model.runSync([{
+                image: uri,
+                width: 180,
+                height: 180,
+            }]);
             
             // Get predictions from output tensor
             const probabilities = output[0];
