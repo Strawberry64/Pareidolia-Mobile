@@ -13,7 +13,7 @@ export default function CameraScreen() {
     const [prediction, setPrediction] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     
-    const model = useTensorflowModel(require('../../flower_classifier.tflite'));
+    const model = useTensorflowModel(require('../../assets/models/flower_classifier.tflite'))
 
     useEffect(() => {
         (async () => {
@@ -30,7 +30,7 @@ export default function CameraScreen() {
         setLoading(true);
         try {
             // Run inference - the library will resize to match model's expected input (180x180)
-            const output = model.model.runSync([uri]);
+            const output = model.runSync([uri]);
             console.log("Output", output);
             // Get predictions from output tensor
             const probabilities = output[0];
