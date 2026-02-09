@@ -2,10 +2,6 @@ import * as ImagePicker from 'expo-image-picker';
 import { useEffect, useState } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTensorflowModel } from 'react-native-fast-tflite';
-import { Asset } from 'expo-asset';
-
-const FLOWER_CLASSES = ['daisy', 'dandelion', 'rose', 'sunflower', 'tulip'];
 
 export default function CameraScreen() {
     const [mediaUri, setMediaUri] = useState<string | null>(null);
@@ -13,40 +9,11 @@ export default function CameraScreen() {
     const [prediction, setPrediction] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     
-    const model = useTensorflowModel(require('../../assets/models/flower_classifier.tflite'))
-
     useEffect(() => {
         (async () => {
             await ImagePicker.requestCameraPermissionsAsync();
         })();
     }, []);
-
-    const classifyImage = async (uri: string) => {
-        if (model.state !== 'loaded') {
-            setPrediction('Model not loaded yet...');
-            return;
-        }
-
-        setLoading(true);
-        try {
-            // Run inference - the library will resize to match model's expected input (180x180)
-            const output = model.runSync([uri]);
-            console.log("Output", output);
-            // Get predictions from output tensor
-            const probabilities = output[0];
-            console.log('Probabilities:', probabilities);
-            const maxIndex = probabilities.indexOf(Math.max(...probabilities));
-            console.log('Max index:', maxIndex);
-            const confidence = (probabilities[maxIndex] * 100).toFixed(1);
-            console.log('Confidence:', confidence);
-            
-            setPrediction(`${FLOWER_CLASSES[maxIndex]} (${confidence}%)`);
-        } catch (error) {
-            console.error('Classification error:', error);
-            setPrediction('Error classifying image');
-        }
-        setLoading(false);
-    };
 
     const takePhoto = async () => {
         const result = await ImagePicker.launchCameraAsync({
@@ -59,7 +26,7 @@ export default function CameraScreen() {
             setMediaUri(result.assets[0].uri);
             setMediaType('image');
             setPrediction(null);
-            await classifyImage(result.assets[0].uri);
+            // await classifyImage(result.assets[0].uri);
         }
     };
 
@@ -81,10 +48,6 @@ export default function CameraScreen() {
         <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
             <View style={styles.container}>
             <Text style={styles.title}>Flower Classifier</Text>
-            
-            {model.state === 'loading' && (
-                <Text style={styles.modelStatus}>Loading model...</Text>
-            )}
             
             <View style={styles.buttonContainer}>
                 <TouchableOpacity style={styles.button} onPress={takePhoto}>

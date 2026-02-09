@@ -35,6 +35,16 @@ export default function TabsLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="classify"   
+        options={{
+          title: 'Classify',
+          tabBarLabel: 'Classify',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="move-outline" color={color} size={size} />
+          ),
+        }}
+      />
     </Tabs>
   );
 }
