@@ -2,6 +2,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { useEffect, useState } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useCodeScanner } from 'react-native-vision-camera';
 
 export default function CameraScreen() {
     const [mediaUri, setMediaUri] = useState<string | null>(null);
@@ -9,6 +10,13 @@ export default function CameraScreen() {
     const [prediction, setPrediction] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     
+    const codeScanner = useCodeScanner({
+        codeTypes: ['qr', 'ean-13'],
+        onCodeScanned: (codes) => {
+            console.log(`Scanned ${codes.length} codes!`)
+        }
+    });
+
     useEffect(() => {
         (async () => {
             await ImagePicker.requestCameraPermissionsAsync();
@@ -19,7 +27,7 @@ export default function CameraScreen() {
         const result = await ImagePicker.launchCameraAsync({
             mediaTypes: ['images'],
             allowsEditing: true,
-            quality: 1,
+            quality: 1
         });
 
         if (!result.canceled) {

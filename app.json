@@ -48,7 +48,12 @@
           "enableAndroidGpuLibraries": true
         }
       ],
-      "react-native-vision-camera"
+      [
+        "react-native-vision-camera",
+        {
+          "enableCodeScanner": true
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
