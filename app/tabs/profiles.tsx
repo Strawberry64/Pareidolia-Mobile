@@ -2,9 +2,25 @@ import { useRouter } from "expo-router";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView } from "react-native";
+import { useCodeScanner, useCameraDevice } from 'react-native-vision-camera';
 
 export default function Index() {
   const router = useRouter();
+  
+  // 1. Use a simple default back camera
+  const device = useCameraDevice('back')
+
+  // 2. Only activate Camera when the app is focused and this screen is currently opened
+  const isFocused = useIsFocused()
+  const isForeground = useIsForeground()
+  const isActive = isFocused && isForeground
+
+  const codeScanner = useCodeScanner({
+      codeTypes: ['qr', 'ean-13'],
+      onCodeScanned: (codes) => {
+          console.log(`Scanned ${codes.length} codes!`)
+      }
+  });
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
