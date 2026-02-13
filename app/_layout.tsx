@@ -1,6 +1,12 @@
+import { useEffect } from "react";
 import { Stack } from "expo-router";
+import { clearTempFiles } from "../hooks/useVideoStorage";
 
 export default function RootLayout() {
+  useEffect(() => {
+    clearTempFiles();
+  }, []);
+
   return (
     <Stack
       screenOptions={{

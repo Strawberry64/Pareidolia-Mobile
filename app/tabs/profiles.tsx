@@ -1,10 +1,41 @@
+import { addProfile, getProfiles, setSelectedProfile } from "@/hooks/useVideoStorage";
 import { useRouter } from "expo-router";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useEffect, useState } from "react";
+import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ScrollView } from "react-native";
 
 export default function Index() {
   const router = useRouter();
+  const [profiles, setProfiles] = useState<string[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      setProfiles(await getProfiles());
+    })();
+  }, []);
+
+  const handleAddProfile = () => {
+    Alert.prompt(
+      "New Profile",
+      "Enter profile name:",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        {
+          text: "Add",
+          onPress: async (name?: string) => {
+            if (name && name.trim()) {
+              await addProfile(name.trim());
+              setProfiles(await getProfiles());
+            }
+          }
+        }
+      ],
+      "plain-text"
+    );
+  };
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
@@ -14,12 +45,35 @@ export default function Index() {
 
       <ScrollView style={styles.container} contentContainerStyle={{paddingBottom: 40, paddingHorizontal: 20}}>
         <View style={styles.grid}>
-            <View style={styles.cardContainer}>
-                <Text style={styles.buttonText}>John Doe</Text>
+            {profiles.map(profile => (
+            <View key={profile} style={styles.cardContainer}>
+              <Text style={styles.smallButtonText}>{profile}</Text>
+              <TouchableOpacity
+                style={[styles.smallButton, { marginTop: 8, backgroundColor: '#4A90E2' }]}
+                onPress={async () => {
+                  await setSelectedProfile(profile);
+                  // Optionally show feedback
+                  console.log(`Selected profile: ${profile}`);
+                }}
+              >
+                <Text style={styles.smallButtonText}>Set Profile</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.smallButton, { marginTop: 6 }]} 
+                onPress={() => router.push({ pathname: '/profileVideos', params: { profile } })}
+              >
+                <Text style={styles.smallButtonText}>View Videos</Text>
+              </TouchableOpacity>
             </View>
-            <View style={styles.cardContainer}>
-                <Text style={styles.buttonText}>Jane Smith</Text>
-            </View>
+            ))}
+            
+            <TouchableOpacity 
+              style={[styles.cardContainer, styles.addCard]}
+              onPress={handleAddProfile}
+            >
+              <Text style={styles.addIcon}>+</Text>
+              <Text style={styles.smallButtonText}>Add Profile</Text>
+            </TouchableOpacity>
         </View>
       </ScrollView>
 
@@ -54,21 +108,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#000',  // Also change this back from #b62d2d
     paddingTop: 10,
   },
-  button: {
+  smallButton: {
     backgroundColor: '#8FD49D',
-    paddingVertical: 16,
-    paddingHorizontal: 48,
-    borderRadius: 12,
-    shadowColor: '#8FD49D',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.5,
-    shadowRadius: 8,
-    elevation: 4,
+    paddingVertical: 6,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    alignSelf: 'center',
+    minWidth: 90,
   },
-  buttonText: {
-    color: '#ffffff',
-    fontSize: 18,
-    fontWeight: '600',
+  smallButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '500',
+    textAlign: 'center',
   },
     header: {
     fontSize: 28,
@@ -83,4 +135,15 @@ const styles = StyleSheet.create({
   justifyContent: 'space-between',
   width: '100%',
 },
+  addCard: {
+    borderStyle: 'dashed',
+    borderWidth: 2,
+    borderColor: '#8FD49D',
+    backgroundColor: 'transparent',
+  },
+  addIcon: {
+    fontSize: 48,
+    color: '#8FD49D',
+    fontWeight: '300',
+  },
 });

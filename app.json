@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "net.armandovega.pareidolia"
+      "bundleIdentifier": "net.armandovega.units"
     },
     "android": {
       "adaptiveIcon": {
@@ -21,7 +21,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "net.armandovega.pareidolia"
+      "package": "net.armandovega.units"
     },
     "web": {
       "output": "static",
@@ -48,8 +48,17 @@
           "enableAndroidGpuLibraries": true
         }
       ],
-      "react-native-vision-camera"
+      [
+        "expo-video",
+        {
+          "supportsBackgroundPlayback": true,
+          "supportsPictureInPicture": true
+        }
+      ],
+      "react-native-vision-camera",
+      "expo-video"
     ],
+    
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
