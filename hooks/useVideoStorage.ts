@@ -66,7 +66,7 @@ export const removeProfileVideo = async (profile: string, uri: string) => {
 
 export const getProfiles = async (): Promise<string[]> => {
   const json = await AsyncStorage.getItem(PROFILES_LIST_KEY);
-  return json ? JSON.parse(json) : ['John Doe', 'Jane Smith'];
+  return json ? JSON.parse(json) : ['Model 1', 'Model 2'];
 };
 
 export const addProfile = async (name: string) => {
@@ -86,15 +86,29 @@ export const removeProfile = async (name: string) => {
 export const clearTempFiles = () => {
     try {
         const cacheDir = new Directory(Paths.cache);
-        if (cacheDir.exists) {
-            for (const item of cacheDir.list()) {
-                try {
-                    item.delete();
-                } catch (e) {
-                    // skip items that can't be deleted
-                }
-            }
-        }
+        // if (cacheDir.exists) {
+        //     for (const item of cacheDir.list()) {
+        //         try {
+        //             // Only delete video files, not cached fonts/assets
+        //             if (item instanceof File) {
+        //                 const name = item.uri.split('/').pop() || '';
+        //                 if (name.endsWith('.mov') || name.endsWith('.mp4')) {
+        //                     item.delete();
+        //                 }
+        //             }
+        //             // Delete ImagePicker temp directories
+        //             if (item instanceof Directory) {
+        //                 const name = item.uri.split('/').pop() || '';
+        //                 if (name.startsWith('ImagePicker')) {
+        //                     item.delete();
+        //                 }
+        //             }
+                    
+        //         } catch (e) {
+        //             // skip items that can't be deleted
+        //         }
+        //     }
+        // }
     } catch (e) {
         console.warn('Failed to clear cache:', e);
     }

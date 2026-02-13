@@ -71,11 +71,11 @@ export default function CameraScreen() {
             
             <View style={styles.buttonContainer}>
                 <TouchableOpacity style={styles.button} onPress={takePhoto}>
-                    <Text style={styles.buttonText}>📷 Take Photo</Text>
+                    <Text style={styles.buttonText}> Take Photo</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.button} onPress={takeVideo}>
-                    <Text style={styles.buttonText}>🎥 Record Video</Text>
+                    <Text style={styles.buttonText}> Record Video</Text>
                 </TouchableOpacity>
             </View>
 
