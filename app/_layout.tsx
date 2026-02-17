@@ -1,6 +1,12 @@
+import { useEffect } from "react";
 import { Stack } from "expo-router";
+// import { clearImagPickerCache } from "../hooks/useVideoStorage";
 
 export default function RootLayout() {
+  // useEffect(() => {
+  //   clearImagPickerCache();
+  // }, []);
+
   return (
     <Stack
       screenOptions={{

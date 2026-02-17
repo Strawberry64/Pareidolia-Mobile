@@ -1,14 +1,29 @@
 import * as ImagePicker from 'expo-image-picker';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { getSelectedProfile, addProfileVideo } from '@/hooks/useVideoStorage';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function CameraScreen() {
     const [mediaUri, setMediaUri] = useState<string | null>(null);
     const [mediaType, setMediaType] = useState<'image' | 'video' | null>(null);
     const [prediction, setPrediction] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
-    
+    const [profile, setProfile] = useState<string | null>(null);
+
+    // Fetch selected profile on mount and when screen is focused
+    useFocusEffect(
+        React.useCallback(() => {
+            let isActive = true;
+            (async () => {
+                const selected = await getSelectedProfile();
+                if (isActive) setProfile(selected);
+            })();
+            return () => { isActive = false; };
+        }, [])
+    );
+
     useEffect(() => {
         (async () => {
             await ImagePicker.requestCameraPermissionsAsync();
@@ -39,8 +54,12 @@ export default function CameraScreen() {
         });
 
         if (!result.canceled) {
+            console.log('\nSAVED: ', result.assets[0].uri);
             setMediaUri(result.assets[0].uri);
             setMediaType('video');
+            if (profile) {
+                await addProfileVideo(profile, result.assets[0].uri);
+            }
         }
     };
 
@@ -48,14 +67,16 @@ export default function CameraScreen() {
         <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
             <View style={styles.container}>
             <Text style={styles.title}>Flower Classifier</Text>
+
+            <Text style={styles.title}> Selected Profile: {profile ?? 'None'} </Text>
             
             <View style={styles.buttonContainer}>
                 <TouchableOpacity style={styles.button} onPress={takePhoto}>
-                    <Text style={styles.buttonText}>📷 Take Photo</Text>
+                    <Text style={styles.buttonText}> Take Photo</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.button} onPress={takeVideo}>
-                    <Text style={styles.buttonText}>🎥 Record Video</Text>
+                    <Text style={styles.buttonText}> Record Video</Text>
                 </TouchableOpacity>
             </View>
 
