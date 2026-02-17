@@ -1,11 +1,11 @@
 import { useEffect } from "react";
 import { Stack } from "expo-router";
-import { clearTempFiles } from "../hooks/useVideoStorage";
+// import { clearImagPickerCache } from "../hooks/useVideoStorage";
 
 export default function RootLayout() {
-  useEffect(() => {
-    clearTempFiles();
-  }, []);
+  // useEffect(() => {
+  //   clearImagPickerCache();
+  // }, []);
 
   return (
     <Stack

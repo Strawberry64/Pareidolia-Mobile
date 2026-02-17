@@ -1,4 +1,4 @@
-import { addProfile, getProfiles, setSelectedProfile } from "@/hooks/useVideoStorage";
+import { addProfile, getProfiles, setSelectedProfile, logStorageUsage, logAllAppStorage } from "@/hooks/useVideoStorage";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -44,6 +44,24 @@ export default function Index() {
       </View>
 
       <ScrollView style={styles.container} contentContainerStyle={{paddingBottom: 40, paddingHorizontal: 20}}>
+        <TouchableOpacity
+          style={[styles.smallButton, { alignSelf: 'center', marginBottom: 20 }]}
+          onPress={async () => {
+            await logStorageUsage();
+          }}
+        >
+          <Text style={styles.smallButtonText}>Show Logs</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.smallButton, { alignSelf: 'center', marginBottom: 20 }]}
+          onPress={async () => {
+            await logAllAppStorage();
+          }}
+        >
+          <Text style={styles.smallButtonText}>Show All App Storage</Text>
+        </TouchableOpacity>
+
         <View style={styles.grid}>
             {profiles.map(profile => (
             <View key={profile} style={styles.cardContainer}>

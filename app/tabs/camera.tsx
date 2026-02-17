@@ -54,6 +54,7 @@ export default function CameraScreen() {
         });
 
         if (!result.canceled) {
+            console.log('\nSAVED: ', result.assets[0].uri);
             setMediaUri(result.assets[0].uri);
             setMediaType('video');
             if (profile) {

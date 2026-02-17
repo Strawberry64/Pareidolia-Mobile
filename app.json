@@ -56,14 +56,20 @@
         }
       ],
       [
-      "react-native-vision-camera",
-      {
-        "cameraPermissionText": "$(PRODUCT_NAME) needs access to your Camera.",
+        "react-native-vision-camera",
+        {
+          "cameraPermissionText": "$(PRODUCT_NAME) needs access to your Camera.",
 
-        "enableMicrophonePermission": true,
-        "microphonePermissionText": "$(PRODUCT_NAME) needs access to your Microphone."
-      }
-    ],
+          "enableMicrophonePermission": true,
+          "microphonePermissionText": "$(PRODUCT_NAME) needs access to your Microphone."
+        }
+      ],
+      [
+        "expo-image-picker",
+          {
+            "photosPermission": "The app accesses your photos to let you select videos for processing."
+          }
+      ],
       "expo-video"
     ],
     
