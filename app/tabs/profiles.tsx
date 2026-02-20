@@ -1,4 +1,4 @@
-import { addProfile, getProfiles, setSelectedProfile, logStorageUsage, logAllAppStorage } from "@/hooks/useVideoStorage";
+import { addProfile, getProfiles, setSelectedProfile, logStorageUsage, logAllAppStorage, clearTmpFiles } from "@/hooks/useVideoStorage";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -60,6 +60,15 @@ export default function Index() {
           }}
         >
           <Text style={styles.smallButtonText}>Show All App Storage</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.smallButton, { alignSelf: 'center', marginBottom: 20, backgroundColor: '#8B0000' }]}
+          onPress={async () => {
+            await clearTmpFiles();
+          }}
+        >
+          <Text style={styles.smallButtonText}>Clear Tmp Files</Text>
         </TouchableOpacity>
 
         <View style={styles.grid}>

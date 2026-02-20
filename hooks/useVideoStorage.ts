@@ -22,7 +22,7 @@ export const getProfileVideos = async (profile: string): Promise<string[]> => {
 export const addProfileVideo = async (profile: string, uri: string) => {
     console.log("URI BEFORE: ", uri)
     // const fileName = `${formatTimeFileName()}_${uri.split('/').pop()}`;
-    const fileName = `${formatTimeFileName()}_${profile.split(' ').join('_')}`;
+    const fileName = `${formatTimeFileName()}_${profile.split(' ').join('_')}.mp4`;
 
     console.log("FILENAME AFTER: ", fileName);
 
@@ -128,6 +128,8 @@ function formatTimeFileName(){
         months[String(now.getMonth() + 1) as keyof typeof months],
         String(now.getDay()).padStart(2, "0"),
         String(now.getHours()).padStart(2, "0") + String(now.getMinutes()).padStart(2, "0"),
+        String(now.getSeconds()).padStart(2, "0"),
+        "user"
     ].join('-');
 }
 
